@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Audit\assessment;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 
 class AssessmentController extends Controller
 {
@@ -50,14 +49,8 @@ class AssessmentController extends Controller
      */
     public function edit($id)
     {
-        // Retrieve the assessment based on the ID
-        $assessment = Assessment::findOrFail(Crypt::decrypt($id));
-
-        // Pass the $assessment variable to the view
-        return view('directories.assessments.edit', compact('assessment'));
         $assessment = Assessment::findOrFail(Crypt::decrypt($id));
         return view('directories.assessments.edit', compact('assessment', 'id'));
-
     }
 
     /**

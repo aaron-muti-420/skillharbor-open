@@ -69,9 +69,9 @@ class SkillController extends Controller
      */
     public function edit(string $encrypted_id)
     {
-        $id = Crypt::decrypt($encrypted_id);
-        $skill = Skill::findOrFail($id);
-        $categories = Category::all();
+        //
+        $skill = skill::findOrFail(Crypt::decrypt($id));
+        $categories = category::all();
 
         return view('directories.skills.edit', compact('skill', 'categories'));
     }

@@ -64,7 +64,9 @@
                                 </x-slot>
                                 <x-slot name="content">
                                     <!-- Directory Management -->
+
                                     <x-dropdown-link href="{{ route('jcp.edit', ['jcp' =>Crypt::encrypt($jcp->id)]) }}">    
+
                                         Edit
                                     </x-dropdown-link>
 

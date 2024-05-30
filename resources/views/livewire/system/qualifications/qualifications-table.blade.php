@@ -49,6 +49,7 @@
 
                                 </x-slot>
                                 <x-slot name="content">
+
                                     <form action="{{ route('qualifications.destroy', ['qualification' => $qualification->id]) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
@@ -60,6 +61,7 @@
                                             Delete
                                         </x-dropdown-link>
                                     </form>
+
 
                                     {{-- <div class="border-t border-gray-200 dark:border-gray-800"></div> --}}
 

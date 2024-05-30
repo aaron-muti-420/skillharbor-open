@@ -4,7 +4,6 @@ namespace App\Http\Controllers\System;
 
 use App\Http\Controllers\Controller;
 use App\Models\Audit\assessment;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 
@@ -40,7 +39,8 @@ class AssessmentController extends Controller
      */
     public function show(string $id)
     {
-        $assesment = assessment::findOrFail($id);
+        $assessment = assessment::findOrFail(Crypt::decrypt($id));
+        Crypt::encrypt($assessment->id);
         return view('summaries.assesment.show', compact('assesment'));
     }
 
@@ -62,9 +62,10 @@ class AssessmentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $assessment = assessment::findOrFail($id);
+        
+        $assessment = assessment::findOrFail(Crypt::decrypt($id));
         $assessment->update($request->all());
-        return redirect()->route('directories.assessments.index');
+        return redirect()->route('directories.assessments.index', compact('assessment', 'id'));
     }
 
     /**

@@ -4,39 +4,39 @@
         <div class="flex">
 
             <div class="flex-initial w-full ...">
-                <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search JCP directory..." class="mb-4 p-2 w-full border border-gray-300 rounded-md">
+                <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search JCP directory..." class="mb-4 p-2 px-4 w-full border border-gray-300 rounded-md">
 
             </div>
             <div class="flex-initial w-auto ml-3 mb-4">
 
-                <button class="flex flex-row p-2 w-28 bg-indigo-400 hover:bg-indigo-500 text-white transition ease-in-out duration-300 rounded-md">
+                <a href="{{route('jcp.create')}}" class="flex flex-row p-2 w-28 bg-sky-200 hover:bg-sky-300 text-sky-800 transition ease-in-out duration-300 rounded-md">
                     <x-gmdi-add-o class="w-6 h-6" />
-                    Add jcp
-                </button>
+                    Add JCP
+                </a>
 
             </div>
 
           </div>
 
 
-<div class="rounded-lg border ">
-    <table class="table-auto min-w-full divide-y divide-gray-200 overflow-hidden">
-        <thead class="bg-gray-50 text-left text-xs text-purple-950/50">
+<div class="rounded-3xl border bg-white  ">
+    <table class="table-auto min-w-full divide-y divide-gray-200 overflow-y-auto">
+        <thead class="text-left text-xs text-sky-800">
             <tr>
-                <th class="px-6 py-3  uppercase ">jcp Title</th>
-                <th class="px-6 py-3  uppercase ">Grade</th>
+                <th class="px-6 py-3 ">JCP Title</th>
+                <th class="px-6 py-3">Job Grade</th>
 
-                <th class="px-6 py-3  uppercase ">Description</th>
-                <th class="px-6 py-3 uppercase ">Is Active</th>
-                <th class="px-6 py-3 text-center uppercase ">Actions</th>
+                <th class="px-6 py-3">Description</th>
+                <th class="px-6 py-3">Is Active</th>
+                <th class="px-6 py-3 text-center">Actions</th>
 
 
                 <!-- Add more table headers as needed -->
             </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
+        <tbody class="text-xs">
             @foreach ($jcps as $jcp)
-                <tr class="cursor-pointer hover:bg-gray-50" onclick="window.location.href = '#'">
+                <tr class="cursor-pointer hover:bg-gray-50 border-t" onclick="window.location.href = '#'">
                     <td class="px-6 py-4 whitespace-nowrap">
                             {{ $jcp->position_title }}
                     </td>
@@ -64,12 +64,12 @@
                                 </x-slot>
                                 <x-slot name="content">
                                     <!-- Directory Management -->
-                                    <x-dropdown-link href="#">
+                                    <x-dropdown-link href="{{ route('jcp.edit', ['jcp' =>Crypt::encrypt($jcp->id)]) }}">
                                         Edit
                                     </x-dropdown-link>
 
 
-                                    <x-dropdown-link class="text-red-900 hover:bg-red-200/50">
+                                    <x-dropdown-link href="#" wire:click.prevent="deleteJCP({{ $jcp->id }})" onclick="return confirm('Are you sure you want to delete this jcp?')" class="text-red-500 hover:bg-red-200/50">
                                             Delete
                                     </x-dropdown-link>
 

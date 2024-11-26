@@ -7,11 +7,16 @@
     "require": {
         "php": "^8.2",
         "andreiio/blade-iconoir": "^4.1",
+        "barryvdh/laravel-dompdf": "^2.2",
         "blade-ui-kit/blade-icons": "^1.6",
         "codeat3/blade-google-material-design-icons": "^1.19",
         "codeat3/blade-iconpark": "^1.6",
+        "consoletvs/charts": "^6.7",
+        "ianw/quickchart": "^1.3",
         "laravel/framework": "^11.0",
         "laravel/jetstream": "^5.0",
+        "laravel/octane": "^2.5",
+        "laravel/pail": "*",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.0"
@@ -24,6 +29,7 @@
         "nunomaduro/collision": "^8.0",
         "pestphp/pest": "^2.0",
         "pestphp/pest-plugin-laravel": "^2.0",
+        "pestphp/pest-plugin-stressless": "^2.2",
         "spatie/laravel-ignition": "^2.4"
     },
     "autoload": {
@@ -53,6 +59,10 @@
             "@php artisan key:generate --ansi",
             "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi"
+        ],
+        "dev": [
+            "Composer\\Config::disableProcessTimeout",
+            "npx concurrently -k -c \"#93c5fd,#c4b5fd,#d4d4d8,#fdba74,#86efac\" \"php artisan serve\" \"npm run dev\"  --names=server,vite,ws"
         ]
     },
     "extra": {
@@ -69,6 +79,7 @@
             "php-http/discovery": true
         }
     },
+
     "minimum-stability": "stable",
     "prefer-stable": true
 }

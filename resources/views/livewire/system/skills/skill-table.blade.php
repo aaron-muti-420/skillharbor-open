@@ -6,7 +6,7 @@
 
                 <x-dropdown align="left" width="48" class="">
                     <x-slot name="trigger">
-                            <button type="button" class="h-10 justify-items-center items-center inline-flex px-3 py-1 border text-sm font-medium rounded-md hover:bg-gray-100 transition ease-in-out duration-150">
+                            <button type="button" class="h-10 justify-items-center items-center inline-flex px-3 py-1 border text-sm font-medium rounded-md  bg-sky-200 hover:bg-sky-300 text-sky-800  transition ease-in-out duration-150  rounded-l-3xl">
                                 <span class="mr-2">
                                     <x-iconoir-drawer />
 
@@ -21,16 +21,17 @@
                     <x-slot name="content">
                         <!-- Category dropdown  -->
                         @forelse ($categories as $category)
-                        <x-dropdown-link href="#">
-                            <h1 class="text-gray-900 dark:text-gray-200 text-sm">
-                                {{ $category->category_title }}
-                            </h1>
-                        </x-dropdown-link>
-                        @empty
-                        <x-dropdown-link href="#">
-                            No categories found
-                        </x-dropdown-link>
-
+                          <x-dropdown-link wire:click.prevent="updateCategory({{ $category->id }})">
+                           <h1 class="text-gray-900 dark:text-gray-200 text-sm">
+                          {{ $category->category_title }}
+                          </h1>
+                         </x-dropdown-link>
+                         @empty
+                         <x-dropdown-link>
+                          <h1 class="text-gray-900 dark:text-gray-200 text-sm">
+                          No categories found
+                          </h1>
+                          </x-dropdown-link>
                         @endforelse
 
 
@@ -39,25 +40,25 @@
                 </x-dropdown>
             </div>
             <div class="flex-initial w-full ...">
-                <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search skills directory..." class="mb-4 p-2 w-full border border-gray-300 rounded-md">
+                <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search skills directory..." class="mb-4 p-2 w-full border border-gray-300 rounded-md focus:ring-sky-400 active:ring-sky-900">
 
             </div>
-           <div class="flex-initial w-auto ml-3 mb-4">
+            <div class="flex-initial w-auto ml-3 mb-4">
+                <a href="{{ route('directories.skills.create') }}" class="flex flex-row p-2 w-28 bg-sky-200 hover:bg-sky-300 text-sky-800 transition ease-in-out duration-300 rounded-l-md rounded-r-3xl">
 
-                <button class="flex flex-row p-2 w-28 bg-indigo-400 hover:bg-indigo-500 text-white transition ease-in-out duration-300 rounded-md">
                     <x-gmdi-add-o class="w-6 h-6" />
                     Add skill
-                </button>
-
+                </a>
             </div>
+
 
 
           </div>
 
 
-<div class="rounded-lg border ">
-    <table class="table-auto min-w-full divide-y divide-gray-200 overflow-hidden">
-        <thead class="bg-gray-50 text-left text-xs text-purple-950/50">
+<div class="rounded-3xl border bg-white shadow-md">
+    <table class="table-auto min-w-full divide-y divide-gray-200 overflow-y-auto">
+        <thead class="text-left text-xs text-sky-950">
             <tr>
                 <th class="px-6 py-3  uppercase ">Skill Title</th>
                 <th class="px-6 py-3  uppercase ">Description</th>
@@ -67,9 +68,9 @@
                 <!-- Add more table headers as needed -->
             </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
+        <tbody class="divide-y divide-gray-200">
             @foreach ($skills as $skill)
-                <tr class="cursor-pointer hover:bg-gray-50" onclick="window.location.href = '#'">
+                <tr class="cursor-pointer hover:bg-gray-50 " onclick="window.location.href = '#'">
                     <td class="px-6 py-4 whitespace-nowrap">
                             {{ $skill->skill_title }}
                     </td>
@@ -85,21 +86,20 @@
                                 </x-slot>
                                 <x-slot name="content">
                                     <!-- Directory Management -->
-                                    <x-dropdown-link href="#">
+                                    <x-dropdown-link href="{{route('skills.edit', ['skill'=> Crypt::encrypt($skill->id)])}}">
                                         Edit
                                     </x-dropdown-link>
 
+                                       <!-- Delete Form -->
+                                       <form action="{{ route('skills.destroy',['skill'=> Crypt::encrypt($skill->id)] ) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this skill?')">
 
-                                    <x-dropdown-link class="text-red-900 hover:bg-red-200/50">
+
+                                        @csrf
+                                        @method('DELETE')
+                                        <x-dropdown-link href="#" onclick="event.preventDefault(); if(confirm('Are you sure you want to delete this skill?')) { this.closest('form').submit(); }" class="text-red-500">
                                             Delete
-                                    </x-dropdown-link>
-
-
-
-
-
-                                    {{-- <div class="border-t border-gray-200 dark:border-gray-800"></div> --}}
-
+                                        </x-dropdown-link>
+                                    </form>
                                 </x-slot>
                             </x-dropdown>
 

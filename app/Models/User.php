@@ -5,9 +5,11 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Models\Audit\assessment;
+use App\Models\Audit\Department;
 use App\Models\Audit\jcp;
 use App\Models\Audit\qualification;
 use App\Models\Audit\skill;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -30,8 +32,8 @@ class User extends Authenticatable
      */
     protected $guarded = [
 
-
     ];
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -86,13 +88,40 @@ class User extends Authenticatable
         return $this->belongsToMany(qualification::class, 'qualification_user');
     }
 
+    public function enrolled()
+    {
+        return $this->belongsToMany(assessment::class, 'enrollments')->withPivot('user_status', 'supervisor_status');
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
+    }
+
     // Search Scope Function
     public function scopeSearch($query, $val)
     {
         return $query
-            ->where('first_name', 'like', '%' . $val . '%')
-            ->orWhere('email', 'like', '%' . $val . '%')
-            ->orWhere('last_name', 'like', '%' . $val . '%');
+            ->where('first_name', 'like', '%'.$val.'%')
+            ->orWhere('email', 'like', '%'.$val.'%')
+            ->orWhere('last_name', 'like', '%'.$val.'%');
 
+    }
+
+    public function supervising(){
+        return $this->hasMany(User::class, 'supervisor_id');
+    }
+
+    public function subordinateCount(){
+        return $this->supervising()->count();
+    }
+
+    public function supervisor(){
+        return $this->belongsTo(User::class, 'supervisor_id');
+    }
+
+    public function getAgeAttribute()
+    {
+        return Carbon::parse($this->attributes['dob'])->age;
     }
 }

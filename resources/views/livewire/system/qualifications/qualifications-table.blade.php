@@ -11,19 +11,20 @@
             <div class="flex-initial w-auto ml-3 mb-4">
 
 
-                    <button class="flex flex-row p-2 bg-indigo-400 hover:bg-indigo-500 text-white transition ease-in-out duration-300 rounded-md">
-                        <x-gmdi-add-o class="w-6 h-6" />
-                        Qualification
-                    </button>
+                <a href="{{route('system.qualifications.create')}}" class="flex flex-row p-2 w-28 bg-sky-200 hover:bg-sky-300 text-sky-800 transition ease-in-out duration-300 rounded-l-md rounded-r-3xl w-auto">
+                    <x-gmdi-add-o class="w-6 h-6" />
+
+                    Qualification
+                </a>
 
             </div>
 
           </div>
 
 
-<div class="rounded-lg border ">
-    <table class="table-auto min-w-full divide-y divide-gray-200 overflow-hidden">
-        <thead class="bg-gray-50 text-left text-xs text-purple-950/50">
+<div class="rounded-3xl border shadow-md bg-white">
+    <table class="table-auto min-w-full divide-y divide-gray-200 overflow-y-auto">
+        <thead class="text-left text-xs text-sky-950">
             <tr>
                 <th class="px-6 py-3  uppercase ">qualification Title</th>
                 <th class="px-6 py-3 text-center uppercase ">Actions</th>
@@ -32,7 +33,7 @@
                 <!-- Add more table headers as needed -->
             </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
+        <tbody class=" divide-y divide-gray-200">
             @foreach ($qualifications as $qualification)
                 <tr class="cursor-pointer hover:bg-gray-50" onclick="window.location.href = '#'">
                     <td class="px-6 py-4 whitespace-nowrap">
@@ -49,19 +50,17 @@
 
                                 </x-slot>
                                 <x-slot name="content">
-                                    <!-- Directory Management -->
-                                    <x-dropdown-link href="#">
-                                        Edit
-                                    </x-dropdown-link>
-
-
-                                    <x-dropdown-link class="text-red-900 hover:bg-red-200/50">
+                                    <form action="{{ route('qualifications.destroy', ['qualification' => $qualification->id]) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <!-- Directory Management -->
+                                        <x-dropdown-link href="{{ route('qualifications.edit', ['qualification' => Crypt::encrypt($qualification->id)]) }}">
+                                            Edit
+                                        </x-dropdown-link>
+                                        <x-dropdown-link href="#" wire:click.prevent="deleteQualification({{ $qualification->id }})" class="text-red-500" onclick="return confirm('Are you sure you want to delete this qualification?')">
                                             Delete
-                                    </x-dropdown-link>
-
-
-
-
+                                        </x-dropdown-link>
+                                    </form>
 
                                     {{-- <div class="border-t border-gray-200 dark:border-gray-800"></div> --}}
 

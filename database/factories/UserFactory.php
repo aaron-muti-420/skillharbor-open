@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Audit\Department;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -28,8 +29,12 @@ class UserFactory extends Factory
     {
         return [
             'salary_ref_number' => $this->faker->unique()->randomNumber(8),
+            'department_id' => $this->faker->randomElement(Department::all()),
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
+            'gender' => fake()->randomElement(['male', 'female']),
+            'dob' => fake()->date(),
+            'role' => fake()->randomElement(['supevisor', 'admin', 'employee']),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
@@ -38,6 +43,7 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'profile_photo_path' => null,
             'current_team_id' => null,
+            'supervisor_id' => $this->faker->randomDigitNotNull(),
         ];
     }
 
@@ -54,7 +60,7 @@ class UserFactory extends Factory
     /**
      * Indicate that the user should have a personal team.
      */
-    public function withPersonalTeam(callable $callback = null): static
+    public function withPersonalTeam(?callable $callback = null): static
     {
         if (! Features::hasTeamFeatures()) {
             return $this->state([]);

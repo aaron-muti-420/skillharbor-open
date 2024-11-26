@@ -16,9 +16,12 @@ class assessmentFactory extends Factory
      */
     public function definition(): array
     {
+        $assessmentName = 'Skills Audit - '.date('Y');
+
         return [
             //
-            'assessment_title' => $this->faker->name(),
+            'assessment_title' => $assessmentName,
+            'closing_date' => $this->faker->dateTimeBetween('-1 day', '+3 months'),
         ];
     }
 }

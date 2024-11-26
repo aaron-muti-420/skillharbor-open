@@ -3,19 +3,36 @@
 namespace App\Livewire\Dashboard;
 
 use App\Models\Audit\qualification;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class DashInfo extends Component
 {
     public $confirmingAddQualification = false;
+
     public $confirmingQualificationRemoval = false;
+
     public $search = '';
+
     public $qualification_title = '';
+
     public $qualification_id = '';
+
+    public $jcp = '';
+
+    public $jcpRating = [];
+
+    public $myRating = [];
+
+    public $supervisorRating = [];
 
     public function mount()
     {
-        $this->confirmingAddQualification  = false;
+        $this->jcp = Auth::user()->jcp()->where('is_active', 1)->first();
+        $this->myRating = $this->jcp ? $this->jcp->sumMyLevels() ?? 0 : 0;
+        $this->supervisorRating = $this->jcp ? $this->jcp->sumSupervisorLevels() ?? 0 : 0;
+        $this->jcpRating = $this->jcp ? $this->jcp->sumRequiredLevelsByCategory() ?? 0 : 0;
+        $this->confirmingAddQualification = false;
         $this->confirmingQualificationRemoval = false;
         $this->search = '';
         $this->qualification_title = '';
@@ -24,27 +41,31 @@ class DashInfo extends Component
 
     public function addQualification()
     {
-        $this->dispatch('confirming-add-role');
+        $this->dispatch('confirmingAddQualification');
         $this->confirmingAddQualification = true;
     }
 
+    public function updateQualificationId()
+    {
+
+        $this->qualification_id = request()->input('qualification_id');
+
+    }
 
     public function addQualificationToUser()
     {
         $this->validate([
-            'qualification_title' => 'required',
+            'qualification_id' => 'required|exists:qualifications,id',
         ]);
-        $qualification = qualification::where('id', $this->qualification_title)->first();
 
-        $user = auth()->user();
-        $user->qualifications()->attach($qualification->id);
+        $qualification = Qualification::find($this->qualification_id);
 
+        Auth::user()->qualifications()->attach($qualification->id);
 
         $this->confirmingAddQualification = false;
-        $this->qualification_title = ''; // Clear the input after successful submission
+        $this->qualification_id = ''; // Clear the input after successful submission
+        session()->flash('message', 'Qualification added successfully!');
     }
-
-
     public function confirmQualficationRemoval($id)
     {
         $role = qualification::find($id);
@@ -57,19 +78,36 @@ class DashInfo extends Component
     public function deleteQualification($id)
     {
 
-            $user = auth()->user();
-            $user->qualifications()->detach($id);
-            $this->confirmingQualificationRemoval = false;
+        $user = auth()->user();
+        $user->qualifications()->detach($id);
+        $this->confirmingQualificationRemoval = false;
 
     }
+
     public function render()
     {
-        $user = auth()->user();
-        $skills = $user->jcp()->with(['skills' => function ($query) {
-            $query->orderByDesc('user_rating');
-        }])->get()->pluck('skills')->flatten()->take(5);
-        $qualification = qualification::all();
+        $developmentPlans = [
+            ['id' => 1, 'name' => 'DevOps Training Plan'],
+            ['id' => 2, 'name' => 'UI/UX Design Roadmap'],
+            ['id' => 3, 'name' => 'Blockchain Development Strategy'],
 
-        return view('livewire.dashboard.dash-info', compact('user', 'skills', 'qualification'));
+        ];
+        $user = auth()->user();
+
+        if($this->jcp == null){
+            $skills = [];
+        }else{
+            $skills = $this->jcp->skills()
+            ->where('user_rating', '>', 1)
+            ->orderByDesc('user_rating')
+            ->take(5)
+            ->get();
+        }
+
+
+        $qualifications = $user->qualifications()->get();
+        $dbQual = qualification::all();
+
+        return view('livewire.dashboard.dash-info', compact('user', 'skills', 'qualifications', 'dbQual', 'developmentPlans'));
     }
 }

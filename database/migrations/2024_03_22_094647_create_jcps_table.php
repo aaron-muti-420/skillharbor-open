@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('jcps', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('assessment_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
 
             $table->string('position_title');
             $table->string('job_grade');
@@ -23,8 +22,6 @@ return new class extends Migration
             $table->integer('is_active')->default(1);
 
             // Add a unique constraint
-            $table->unique(['user_id', 'assessment_id']);
-
 
             $table->timestamps();
         });
